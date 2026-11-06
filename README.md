@@ -117,23 +117,35 @@ no backend, no cold start, no per-request cost. Latency target: <200 ms.
 
 ## Quickstart
 
-Requires Docker, Node.js, Python 3.11+, and (for deploy) Terraform + AWS credentials.
+The root [`Makefile`](./Makefile) is the single entrypoint (`make help` lists
+every target). Requires Docker + Docker Compose; the deploy targets additionally
+need Node.js, Terraform, and AWS credentials.
 
 ```bash
+make smoke      # build the image and verify PySpark + a local Spark session
 make pipeline   # download data, train models, write artifacts (local, $0)
-make up         # terraform apply + s3 sync + CloudFront invalidation
-make cost       # AWS Cost Explorer snapshot
-make down       # terraform destroy, including the bucket → back to $0
+make up         # terraform apply + build frontend + s3 sync + CloudFront invalidation
+make cost       # AWS Cost Explorer snapshot for the last 30 days
+make down       # terraform destroy (bucket included) + stop containers → back to $0
 ```
 
-> The Makefile targets above are the intended interface and land in the next
-> Phase 0 step (see [Roadmap](#roadmap)). Until then the containers can be driven
-> directly:
->
-> ```bash
-> docker compose up -d prefect    # Prefect server + dashboard on http://localhost:4200
-> docker compose exec spark python -c "import pyspark; print(pyspark.__version__)"
-> ```
+| Target       | What it does                                                         |
+|--------------|----------------------------------------------------------------------|
+| `build`      | Build the pipeline Docker image                                       |
+| `smoke`      | Verify `pyspark` import and a `local[2]` Spark session in the image   |
+| `pipeline`   | Start Prefect, run `pipeline/flows.py` (ingest → models → artifacts)  |
+| `logs`       | Tail logs of the local pipeline services                              |
+| `stop`       | Stop local containers, keeping volumes and `data/`                    |
+| `up`         | `terraform apply`, then `deploy`                                      |
+| `deploy`     | Build the frontend, `aws s3 sync` to S3, invalidate CloudFront        |
+| `invalidate` | Invalidate the CloudFront cache for `/*`                              |
+| `down`       | `terraform destroy` and stop containers                               |
+| `cost`       | AWS Cost Explorer snapshot (last 30 days, monthly granularity)        |
+| `clean`      | Remove build output and caches; never touches `data/`                 |
+
+Targets for phases that are not implemented yet fail fast with a message naming
+the missing piece — `pipeline` checks for `pipeline/flows.py`, and `up` /
+`deploy` / `down` check for `infra/terraform` plus the `frontend/` package.
 
 ## Local pipeline containers
 
@@ -218,7 +230,8 @@ temporal split.
 - [x] Repo, `plan.md`, `README.md` with architecture diagram
 - [x] `docker-compose.yml` with `spark` and `prefect` services
 - [x] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
-- [ ] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
+- [x] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
+- [ ] `pip install` everything; smoke test `pyspark` import
 - [ ] Ingest + Item2Vec baseline with recorded metrics
 - [ ] Artist UMAP map
 - [ ] Serendipity ranking + metrics
