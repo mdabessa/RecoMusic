@@ -1,0 +1,59 @@
+name: recomusic
+
+x-pipeline-env: &pipeline-env
+  PYTHONUNBUFFERED: "1"
+  RECOMUSIC_DATA_DIR: /data
+  RECOMUSIC_ARTIFACTS_DIR: /data/artifacts
+  PREFECT_API_URL: http://prefect:4200/api
+
+x-pipeline-base: &pipeline-base
+  image: recomusic-pipeline:local
+  build:
+    context: ./pipeline
+  working_dir: /app
+  environment: *pipeline-env
+  restart: unless-stopped
+
+services:
+  prefect:
+    <<: *pipeline-base
+    command: ["prefect", "server", "start", "--host", "0.0.0.0"]
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./data:/data
+      - ./pipeline:/app
+      - prefect-data:/root/.prefect
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import sys, urllib.request
+          sys.exit(0 if urllib.request.urlopen("http://127.0.0.1:4200/api/health").status == 200 else 1)
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  spark:
+    <<: *pipeline-base
+    # long-lived driver: jobs are executed against it, e.g. docker compose exec spark python flows.py
+    command: ["sleep", "infinity"]
+    depends_on:
+      prefect:
+        condition: service_healthy
+    environment:
+      <<: *pipeline-env
+      SPARK_MASTER: "local[4]"
+      SPARK_DRIVER_MEMORY: 4g
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./data:/data
+      - ./pipeline:/app
+    shm_size: "512mb"
+
+volumes:
+  prefect-data:

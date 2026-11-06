@@ -174,3 +174,12 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+### RecoMusic ###
+# Downloaded dataset and generated artifacts (large, regenerable via `make pipeline`)
+/data/raw/*
+!/data/raw/.gitkeep
+/data/artifacts/*
+!/data/artifacts/.gitkeep
+/data/*.db
+/data/*.duckdb

@@ -192,9 +192,9 @@ RecoMusic/
 ### Phase 0 — Scaffolding
 
 - [x] Create repo, `plan.md`, `README.md` with architecture diagram
-- [ ] `docker-compose.yml` with `spark` and `prefect` services
+- [x] `docker-compose.yml` with `spark` and `prefect` services
 - [ ] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
-- [ ] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
+- [x] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
 - [ ] `pip install` everything; smoke test `pyspark` import
 
 ### Phase 1 — Ingest + Baseline ML

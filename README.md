@@ -126,9 +126,29 @@ make cost       # AWS Cost Explorer snapshot
 make down       # terraform destroy, including the bucket → back to $0
 ```
 
-> The Makefile targets above are the intended interface; they land as part of
-> Phase 0 scaffolding (see [Roadmap](#roadmap)). Until then the pipeline jobs
-> can be run individually from `pipeline/jobs/`.
+> The Makefile targets above are the intended interface and land in the next
+> Phase 0 step (see [Roadmap](#roadmap)). Until then the containers can be driven
+> directly:
+>
+> ```bash
+> docker compose up -d prefect    # Prefect server + dashboard on http://localhost:4200
+> docker compose exec spark python -c "import pyspark; print(pyspark.__version__)"
+> ```
+
+## Local pipeline containers
+
+`docker-compose.yml` defines two services built from `pipeline/Dockerfile`
+(Python 3.11, PySpark 3.5, Prefect 3, UMAP, DuckDB):
+
+| Service   | Purpose                                                             |
+|-----------|---------------------------------------------------------------------|
+| `prefect` | Prefect 3 server — orchestration API and dashboard on `:4200`       |
+| `spark`   | Long-lived Spark driver (`local[4]`, 4 GB) — jobs are exec'd into it |
+
+Both mount `./data` at `/data` (dataset + artifacts) and `./pipeline` at `/app`,
+so code edits do not require a rebuild. Jobs read `RECOMUSIC_DATA_DIR`,
+`RECOMUSIC_ARTIFACTS_DIR`, and `PREFECT_API_URL` from the environment. The
+`spark` service waits for the Prefect health endpoint before starting.
 
 ## Repository layout
 
@@ -138,8 +158,10 @@ RecoMusic/
 ├── docker-compose.yml
 ├── plan.md
 ├── README.md
+├── data/                       # gitignored: raw dataset (raw/) + artifacts/
 ├── pipeline/
 │   ├── Dockerfile
+│   ├── .dockerignore
 │   ├── requirements.txt        # pyspark, prefect, umap-learn, duckdb, boto3
 │   ├── flows.py                # Prefect @flow orchestrating the jobs
 │   └── jobs/
@@ -194,9 +216,9 @@ temporal split.
 ## Roadmap
 
 - [x] Repo, `plan.md`, `README.md` with architecture diagram
-- [ ] `docker-compose.yml` with `spark` and `prefect` services
+- [x] `docker-compose.yml` with `spark` and `prefect` services
+- [x] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
 - [ ] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
-- [ ] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
 - [ ] Ingest + Item2Vec baseline with recorded metrics
 - [ ] Artist UMAP map
 - [ ] Serendipity ranking + metrics
