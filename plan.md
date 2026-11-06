@@ -191,7 +191,7 @@ RecoMusic/
 
 ### Phase 0 — Scaffolding
 
-- [/] Create repo, `plan.md`, `README.md` with architecture diagram
+- [x] Create repo, `plan.md`, `README.md` with architecture diagram
 - [ ] `docker-compose.yml` with `spark` and `prefect` services
 - [ ] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
 - [ ] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
