@@ -195,7 +195,7 @@ RecoMusic/
 - [x] `docker-compose.yml` with `spark` and `prefect` services
 - [x] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
 - [x] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
-- [ ] `pip install` everything; smoke test `pyspark` import
+- [x] `pip install` everything; smoke test `pyspark` import
 
 ### Phase 1 — Ingest + Baseline ML
 
