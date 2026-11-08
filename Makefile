@@ -27,6 +27,9 @@ smoke: ## Verify the pipeline image can import PySpark and start a local Spark s
 	$(COMPOSE) run --rm --no-deps spark python -c "import pyspark; print('pyspark', pyspark.__version__)"
 	$(COMPOSE) run --rm --no-deps spark python -c "from pyspark.sql import SparkSession; s = SparkSession.builder.master('local[2]').getOrCreate(); print('spark', s.version); s.stop()"
 
+ingest: ## Download Yambda-50M to data/raw (cached)
+	$(COMPOSE) run --rm --no-deps spark python jobs/01_ingest.py --with-embeddings
+
 pipeline: build ## Run the full pipeline (ingest -> models -> artifacts) via Prefect
 	@test -f pipeline/flows.py || { echo "pipeline/flows.py not found — Phase 1 not implemented yet"; exit 1; }
 	$(COMPOSE) up -d prefect

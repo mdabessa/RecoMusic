@@ -231,10 +231,12 @@ temporal split.
 - [x] `docker-compose.yml` with `spark` and `prefect` services
 - [x] `pipeline/Dockerfile` (Python 3.11 + PySpark 3.5 + Prefect 3)
 - [x] Root `Makefile` stubs (`pipeline`, `deploy`, `up`, `down`, `cost`)
-- [ ] `pip install` everything; smoke test `pyspark` import
-- [ ] Ingest + Item2Vec baseline with recorded metrics
-- [ ] Artist UMAP map
-- [ ] Serendipity ranking + metrics
+- [x] `pip install` everything; smoke test `pyspark` import
+- [x] `01_ingest.py`: download Yambda-50M with row-count sanity check
+- [ ] `02_item2vec.py`: train Item2Vec embeddings
+- [ ] Evaluation: temporal split, precision@10 / recall@10 / NDCG@10
+- [ ] `03_umap_artists.py`: artist UMAP map
+- [ ] `04_recs.py` + `05_surprise.py`: serendipity + metrics
 - [ ] React frontend on localhost
 - [ ] AWS deploy (S3 + CloudFront + OAC + budgets)
 - [ ] CI/CD via GitHub Actions with OIDC
