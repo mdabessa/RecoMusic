@@ -200,7 +200,7 @@ RecoMusic/
 ### Phase 1 — Ingest + Baseline ML
 
 - [x] `01_ingest.py`: download Yambda-50M to `./data/raw`, cache, sanity-check row counts
-- [ ] `02_item2vec.py`: build per-user sequences → train Word2Vec (dim=64, window=10, epochs=10)
+- [x] `02_item2vec.py`: build per-user sequences → train Word2Vec (dim=64, window=10, epochs=10)
 - [ ] Evaluation job: temporal split, `p10/r10/NDCG@10`
 - [ ] Persist `track_emb.parquet`, `item2vec_metrics.json`
 - [ ] **Milestone: baseline metrics recorded**
