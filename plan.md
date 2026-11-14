@@ -207,10 +207,10 @@ RecoMusic/
 
 ### Phase 2 — Artist Map
 
-- [ ] `03_umap_artists.py`: aggregate embeddings per artist, UMAP 2D
-- [ ] Export `artist_umap.parquet`
-- [ ] Static local plot (matplotlib) as sanity check
-- [ ] **Milestone: artist map rendered locally**
+- [x] `03_umap_artists.py`: aggregate embeddings per artist, UMAP 2D
+- [x] Export `artist_umap.parquet`
+- [x] Static local plot (matplotlib) as sanity check
+- [x] **Milestone: artist map rendered locally**
 
 ### Phase 3 — Serendipity
 

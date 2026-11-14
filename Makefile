@@ -10,7 +10,7 @@ FRONTEND_DIR := frontend
 DIST_DIR     := $(FRONTEND_DIR)/dist
 AWS_REGION   ?= us-east-1
 
-.PHONY: help build smoke ingest item2vec pipeline logs stop up down deploy invalidate cost clean \
+.PHONY: help build smoke ingest item2vec artist-map pipeline logs stop up down deploy invalidate cost clean \
         _require-tf _require-deploy
 
 help: ## List available targets
@@ -32,6 +32,9 @@ ingest: ## Download Yambda-50M to data/raw (cached)
 
 item2vec: ## Train Item2Vec (Word2Vec) on per-user listen sequences
 	$(COMPOSE) run --rm --no-deps spark python jobs/02_item2vec.py
+
+artist-map: ## Build artist proximity map (weighted-mean embeddings + UMAP 2D)
+	$(COMPOSE) run --rm --no-deps spark python jobs/03_umap_artists.py
 
 pipeline: build ## Run the full pipeline (ingest -> models -> artifacts) via Prefect
 	@test -f pipeline/flows.py || { echo "pipeline/flows.py not found — Phase 1 not implemented yet"; exit 1; }
