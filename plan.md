@@ -215,7 +215,7 @@ RecoMusic/
 ### Phase 3 — Serendipity
 
 - [x] `04_recs.py`: top-20 per user, partition by `user_id % 100` (actually `(user_id // 100) % 100` due to Yambda user IDs being multiples of 100)
-- [ ] `05_surprise.py`: implement relevance + novelty + diversity scoring
+- [x] `05_surprise.py`: implement relevance + novelty + diversity scoring
 - [ ] Metrics: `novelty@k`, `serendipity@k` on validation
 - [ ] Partition parquet outputs by `user_id % N` for DuckDB range requests
 - [ ] **Milestone: core ML features complete**
